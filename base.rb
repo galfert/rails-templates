@@ -17,7 +17,9 @@ run "cp config/database.yml config/database.yml.example"
 # Add some common gems
 gem 'mislav-will_paginate', :lib => 'will_paginate', :source => 'http://gems.github.com'
 gem 'rubaidh-google_analytics', :lib => 'rubaidh/google_analytics', :source => 'http://gems.github.com'
-initializer 'google_analytics.rb', "Rubaidh::GoogleAnalytics.tracker_id = ''"
+initializer 'google_analytics.rb', "Rubaidh::GoogleAnalytics.tracker_id = 'TRACKER-ID'"
+
+rake("gems:install", :sudo => true)
 
 # Add plugins
 plugin 'jrails', :git => 'git://github.com/aaronchi/jrails.git', :submodule => true
@@ -25,7 +27,7 @@ plugin 'asset_packager', :git => 'git://github.com/sbecker/asset_packager.git', 
 plugin 'hoptoad_notifier', :git => 'git://github.com/thoughtbot/hoptoad_notifier.git', :submodule => true
 initializer 'hoptoad.rb', <<-END
 HoptoadNotifier.configure do |config|
-  config.api_key = ''
+  config.api_key = 'HOPTOAD-KEY'
 end
 END
 
@@ -41,6 +43,9 @@ config/application.yml
 config/database.yml
 db/*.sqlite3
 END
+
+capify!
+run "curl -L http://github.com/galfert/rails-templates/raw/master/assets/deploy.rb > config/deploy.rb"
 
 # Initialize submodules
 git :submodule => "init"
