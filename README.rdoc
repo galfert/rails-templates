@@ -15,4 +15,4 @@ That will generate a Rails app using the base.rb template found here.
 
 --
 
-Copyright (c) 2009 Garret Alfert, released under the BSD license
+Copyright (c) 2009 Garret Alfert, released under the MIT license
