@@ -15,11 +15,14 @@ git :init
 run "cp config/database.yml config/database.yml.example"
  
 # Add some common gems
+gem 'haml'
 gem 'mislav-will_paginate', :lib => 'will_paginate', :source => 'http://gems.github.com'
+gem 'thoughtbot-shoulda', :lib => 'shoulda', :source => 'http://gems.github.com'
+gem 'thoughtbot-factory_girl', :lib => 'factory_girl', :source => 'http://gems.github.com'
 gem 'rubaidh-google_analytics', :lib => 'rubaidh/google_analytics', :source => 'http://gems.github.com'
 initializer 'google_analytics.rb', "Rubaidh::GoogleAnalytics.tracker_id = 'TRACKER-ID'"
 
-rake("gems:install", :sudo => true)
+#rake("gems:install", :sudo => true)
 
 # Add plugins
 plugin 'jrails', :git => 'git://github.com/aaronchi/jrails.git', :submodule => true
@@ -30,6 +33,11 @@ HoptoadNotifier.configure do |config|
   config.api_key = 'HOPTOAD-KEY'
 end
 END
+
+# Make some room for factories
+inside ('test') do
+  run "mkdir factories"
+end
 
 # Set up plugins, migrations, etc.
 rake 'jrails:install:javascripts'
@@ -44,6 +52,18 @@ config/database.yml
 db/*.sqlite3
 END
 
+# get application_controller started
+file 'app/controllers/application_controller.rb',
+<<-END
+class ApplicationController < ActionController::Base
+  helper :all
+
+  protect_from_forgery
+  filter_parameter_logging :password
+end
+END
+
+# Deployment scripts
 capify!
 run "curl -L http://github.com/galfert/rails-templates/raw/master/assets/deploy.rb > config/deploy.rb"
 
